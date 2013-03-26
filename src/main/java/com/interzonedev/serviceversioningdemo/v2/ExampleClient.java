@@ -1,4 +1,4 @@
-package com.interzonedev.serviceversioningdemo.v1;
+package com.interzonedev.serviceversioningdemo.v2;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -53,19 +53,20 @@ public class ExampleClient implements ExampleAPI {
 	}
 
 	@Override
-	public void print(String message) {
+	public void print(String message, boolean timestamp) {
 
-		log.debug("print: message = " + message);
+		log.debug("print: message = " + message + " - timestamp = " + timestamp);
 
-		send(new Command("print", message));
+		send(new Command("print", message, timestamp));
 
 	}
 
 	@Override
-	public void println(String message) {
-		log.debug("println: message = " + message);
+	public void println(String message, boolean timestamp) {
 
-		send(new Command("println", message));
+		log.debug("println: message = " + message + " - timestamp = " + timestamp);
+
+		send(new Command("println", message, timestamp));
 
 	}
 
@@ -89,7 +90,7 @@ public class ExampleClient implements ExampleAPI {
 
 		while (!"quit".equals(message)) {
 			if (StringUtils.isNotBlank(message)) {
-				println(message);
+				println(message, true);
 			}
 			message = br.readLine();
 		}

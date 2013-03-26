@@ -16,20 +16,21 @@ public class ServiceRunner {
 	public static void main(String[] args) throws ShutdownSignalException, ConsumerCancelledException, IOException,
 			InterruptedException {
 
-		final com.interzonedev.serviceversioningdemo.v1.ExampleService serviceV1 = new com.interzonedev.serviceversioningdemo.v1.ExampleService();
+		final ServiceInvoker invoker = new ServiceInvoker();
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
 				try {
-					serviceV1.destroy();
+					invoker.destroy();
 				} catch (IOException ioe) {
-					log.error("main: Error destroying service", ioe);
+					log.error("main: Error destroying invoker", ioe);
 				}
 			}
 		});
 
-		serviceV1.init();
+		invoker.init();
+		invoker.receive();
 
 	}
 

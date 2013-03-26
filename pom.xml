@@ -81,6 +81,10 @@
 									<name>v1_client</name>
 								</program>
 								<program>
+									<mainClass>com.interzonedev.serviceversioningdemo.v2.ExampleClient</mainClass>
+									<name>v2_client</name>
+								</program>
+								<program>
 									<mainClass>com.interzonedev.serviceversioningdemo.ServiceRunner</mainClass>
 									<name>service</name>
 								</program>
