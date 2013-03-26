@@ -17,7 +17,7 @@ import com.rabbitmq.client.ShutdownSignalException;
 
 public class ExampleService implements ExampleAPI {
 
-	private static final Logger log = (Logger) LoggerFactory.getLogger(ExampleService.class);
+	private final Logger log = (Logger) LoggerFactory.getLogger(getClass());
 
 	private ConnectionFactory factory;
 
@@ -52,13 +52,18 @@ public class ExampleService implements ExampleAPI {
 	}
 
 	public void destroy() throws IOException {
+
 		log.info("Destroying service");
+
 		channel.close();
 		connection.close();
+
 		log.info("Destroyed service");
+
 	}
 
 	private void receive() throws ShutdownSignalException, ConsumerCancelledException, InterruptedException {
+
 		while (true) {
 			QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 
@@ -79,35 +84,16 @@ public class ExampleService implements ExampleAPI {
 				log.error("receive: Unsupported method " + method);
 			}
 		}
+
 	}
 
 	public void print(String message) {
-		System.out.print("Example: message = " + message);
+		System.out.print("Version 1: message = " + message);
 
 	}
 
 	public void println(String message) {
-		System.out.println("Example: message = " + message);
-	}
-
-	public static void main(String[] args) throws ShutdownSignalException, ConsumerCancelledException, IOException,
-			InterruptedException {
-
-		final ExampleService service = new ExampleService();
-
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				try {
-					service.destroy();
-				} catch (IOException ioe) {
-					log.error("main: Error destroying service", ioe);
-				}
-			}
-		});
-
-		service.init();
-
+		System.out.println("Version 1: message = " + message);
 	}
 
 }
