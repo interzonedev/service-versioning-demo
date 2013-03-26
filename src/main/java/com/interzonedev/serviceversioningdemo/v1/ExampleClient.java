@@ -1,56 +1,17 @@
 package com.interzonedev.serviceversioningdemo.v1;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
-import org.apache.commons.lang.SerializationUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Logger;
 
+import com.interzonedev.serviceversioningdemo.AbstractClient;
 import com.interzonedev.serviceversioningdemo.Command;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 
-public class ExampleClient implements ExampleAPI {
+public class ExampleClient extends AbstractClient implements ExampleAPI {
 
 	private static final Logger log = (Logger) LoggerFactory.getLogger(ExampleClient.class);
-
-	private ConnectionFactory factory;
-
-	private Connection connection;
-
-	private Channel channel;
-
-	public void init() throws IOException {
-
-		log.info("Initializing client");
-
-		factory = new ConnectionFactory();
-		factory.setHost("localhost");
-
-		connection = factory.newConnection();
-
-		channel = connection.createChannel();
-		channel.exchangeDeclare(EXCHANGE_NAME, "direct");
-
-		log.info("Initialized client");
-
-	}
-
-	public void destroy() throws IOException {
-
-		log.info("Destroying client");
-
-		channel.close();
-		connection.close();
-
-		log.info("Destroyed client");
-
-	}
 
 	@Override
 	public void print(String message) {
@@ -63,36 +24,22 @@ public class ExampleClient implements ExampleAPI {
 
 	@Override
 	public void println(String message) {
+
 		log.debug("println: message = " + message);
 
 		send(new Command("println", message));
 
 	}
 
-	private void send(Command command) {
-
-		log.debug("send: Sending command " + command);
-
-		try {
-			channel.basicPublish(EXCHANGE_NAME, VERSION, null, SerializationUtils.serialize(command));
-		} catch (IOException ioe) {
-			log.error("print: Error sending message", ioe);
-		}
-
+	@Override
+	protected String getVersion() {
+		return VERSION;
 	}
 
-	private void poll() throws IOException {
+	@Override
+	protected void process(String input) {
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-		String message = br.readLine();
-
-		while (!"quit".equals(message)) {
-			if (StringUtils.isNotBlank(message)) {
-				println(message);
-			}
-			message = br.readLine();
-		}
+		println(input);
 
 	}
 
@@ -106,7 +53,7 @@ public class ExampleClient implements ExampleAPI {
 				try {
 					client.destroy();
 				} catch (IOException ioe) {
-					log.error("main: Error destroying service", ioe);
+					log.error("main: Error destroying client", ioe);
 				}
 			}
 		});
