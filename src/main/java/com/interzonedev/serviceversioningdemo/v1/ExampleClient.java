@@ -39,7 +39,27 @@ public class ExampleClient extends AbstractClient implements ExampleAPI {
 	@Override
 	protected void process(String input) {
 
-		println(input);
+		String[] args = input.trim().split("\\s+");
+
+		if (args.length < 2) {
+			log.error("process: usage <method> <message part 1> [<message part 2>...]");
+			return;
+		}
+
+		String method = args[0];
+		StringBuilder messageBuilder = new StringBuilder();
+		for (int i = 1; i < args.length; i++) {
+			messageBuilder.append(args[i]).append(" ");
+		}
+		String message = messageBuilder.toString().trim();
+
+		if ("println".equals(method)) {
+			println(message);
+		} else if ("print".equals(method)) {
+			print(message);
+		} else {
+			log.error("process: Unsuppored method " + method);
+		}
 
 	}
 
