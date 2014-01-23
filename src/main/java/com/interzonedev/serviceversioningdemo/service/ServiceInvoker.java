@@ -1,6 +1,7 @@
 package com.interzonedev.serviceversioningdemo.service;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.slf4j.Logger;
@@ -43,8 +44,7 @@ public class ServiceInvoker {
 
 		channel.exchangeDeclare(ExampleAMQP.EXCHANGE_NAME, "direct");
 		channel.queueDeclare(ExampleAMQP.QUEUE_NAME, false, false, true, null);
-		channel.queueBind(ExampleAMQP.QUEUE_NAME, ExampleAMQP.EXCHANGE_NAME, ExampleAMQP.VERSION_1_KEY);
-		channel.queueBind(ExampleAMQP.QUEUE_NAME, ExampleAMQP.EXCHANGE_NAME, ExampleAMQP.VERSION_2_KEY);
+		channel.queueBind(ExampleAMQP.QUEUE_NAME, ExampleAMQP.EXCHANGE_NAME, ExampleAMQP.ROUTING_KEY);
 
 		consumer = new QueueingConsumer(channel);
 		channel.basicConsume(ExampleAMQP.QUEUE_NAME, true, consumer);
@@ -71,15 +71,16 @@ public class ServiceInvoker {
 
 			Command command = (Command) SerializationUtils.deserialize(delivery.getBody());
 
-			String routingKey = delivery.getEnvelope().getRoutingKey();
+			Map<String, Object> headers = delivery.getProperties().getHeaders();
+			String version = headers.get("version").toString();
 
-			log.debug("receive: routingKey = " + routingKey + " - command = " + command);
+			log.debug("receive: version = " + version + " - command = " + command);
 
 			String method = command.getMethod();
 			String message = command.getMessage();
 			boolean timestamp = command.isTimestamp();
 
-			if (ExampleAMQP.VERSION_1_KEY.equals(routingKey)) {
+			if (ExampleAMQP.VERSION_1_KEY.equals(version)) {
 				if ("print".equals(method)) {
 					serviceV1.print(message);
 				} else if ("println".equals(method)) {
@@ -87,7 +88,7 @@ public class ServiceInvoker {
 				} else {
 					log.error("receive: Unsupported method " + method);
 				}
-			} else if (ExampleAMQP.VERSION_2_KEY.equals(routingKey)) {
+			} else if (ExampleAMQP.VERSION_2_KEY.equals(version)) {
 				if ("print".equals(method)) {
 					serviceV2.print(message, timestamp);
 				} else if ("println".equals(method)) {
@@ -96,7 +97,7 @@ public class ServiceInvoker {
 					log.error("receive: Unsupported method " + method);
 				}
 			} else {
-				log.error("receive: Unsupported version " + routingKey);
+				log.error("receive: Unsupported version " + version);
 			}
 
 		}

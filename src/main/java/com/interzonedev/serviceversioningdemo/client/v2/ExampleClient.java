@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.interzonedev.serviceversioningdemo.client.AbstractClient;
 import com.interzonedev.serviceversioningdemo.common.Command;
+import com.interzonedev.serviceversioningdemo.common.ExampleAMQP;
 import com.interzonedev.serviceversioningdemo.common.v2.ExampleAPI;
 
 public class ExampleClient extends AbstractClient implements ExampleAPI {
@@ -33,11 +34,13 @@ public class ExampleClient extends AbstractClient implements ExampleAPI {
 
 	@Override
 	protected String getVersion() {
-		return VERSION;
+		return ExampleAMQP.VERSION_2_KEY;
 	}
 
 	@Override
 	protected void process(String input) {
+
+		log.debug("process: input = " + input);
 
 		String[] args = input.trim().split("\\s+");
 
@@ -70,34 +73,17 @@ public class ExampleClient extends AbstractClient implements ExampleAPI {
 			log.error("process: Unsuppored method " + method);
 		}
 
+		log.debug("process: End");
+
 	}
 
 	public static void main(String[] args) throws IOException {
 
 		final ExampleClient client = new ExampleClient();
 
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				try {
-					log.info("main: Shutting down");
-					client.destroy();
-					log.info("main: Shut down");
-				} catch (IOException ioe) {
-					log.error("main: Error destroying client", ioe);
-				}
-			}
-		});
-
-		try {
-			log.info("main: Initializing client");
-			client.init();
-			log.info("main: Starting client");
-			client.poll();
-			log.info("main: Client completed");
-		} catch (IOException ioe) {
-			log.error("main: Error running client", ioe);
-		}
+		log.info("main: Deploying client");
+		client.deploy();
+		log.info("main: Client completed");
 
 		System.exit(0);
 
