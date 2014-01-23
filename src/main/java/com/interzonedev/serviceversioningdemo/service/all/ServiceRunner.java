@@ -1,4 +1,4 @@
-package com.interzonedev.serviceversioningdemo.service;
+package com.interzonedev.serviceversioningdemo.service.all;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -8,8 +8,8 @@ import org.apache.commons.lang.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interzonedev.serviceversioningdemo.common.Command;
-import com.interzonedev.serviceversioningdemo.common.ExampleAMQP;
+import com.interzonedev.serviceversioningdemo.common.all.Command;
+import com.interzonedev.serviceversioningdemo.common.all.ExampleAMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;

@@ -3,8 +3,8 @@ package com.interzonedev.serviceversioningdemo.service.v2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interzonedev.serviceversioningdemo.common.Command;
-import com.interzonedev.serviceversioningdemo.service.ServiceInvoker;
+import com.interzonedev.serviceversioningdemo.common.all.Command;
+import com.interzonedev.serviceversioningdemo.service.all.ServiceInvoker;
 
 public class ExampleInvoker implements ServiceInvoker {
 

@@ -1,4 +1,4 @@
-package com.interzonedev.serviceversioningdemo.client;
+package com.interzonedev.serviceversioningdemo.client.all;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,8 +11,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interzonedev.serviceversioningdemo.common.Command;
-import com.interzonedev.serviceversioningdemo.common.ExampleAMQP;
+import com.interzonedev.serviceversioningdemo.common.all.Command;
+import com.interzonedev.serviceversioningdemo.common.all.ExampleAMQP;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;

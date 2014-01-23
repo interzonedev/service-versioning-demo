@@ -3,9 +3,9 @@ package com.interzonedev.serviceversioningdemo.client.v1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interzonedev.serviceversioningdemo.client.AbstractClient;
-import com.interzonedev.serviceversioningdemo.common.Command;
-import com.interzonedev.serviceversioningdemo.common.ExampleAMQP;
+import com.interzonedev.serviceversioningdemo.client.all.AbstractClient;
+import com.interzonedev.serviceversioningdemo.common.all.Command;
+import com.interzonedev.serviceversioningdemo.common.all.ExampleAMQP;
 import com.interzonedev.serviceversioningdemo.common.v1.ExampleAPI;
 
 public class ExampleClient extends AbstractClient implements ExampleAPI {
