@@ -1,13 +1,13 @@
 package com.interzonedev.serviceversioningdemo.client.all;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.SerializationUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +76,7 @@ public abstract class AbstractClient {
 		String input = br.readLine();
 
 		while (!"quit".equals(input)) {
-			if (StringUtils.isNotBlank(input)) {
+			if (!"".equals(input.trim())) {
 				process(input);
 			}
 			input = br.readLine();
@@ -118,8 +118,24 @@ public abstract class AbstractClient {
 		return basicProperties;
 	}
 
-	private byte[] getMessageBody(Command command) {
-		return SerializationUtils.serialize(command);
+	private byte[] getMessageBody(Command command) throws IOException {
+
+		ObjectOutputStream oos = null;
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
+			oos = new ObjectOutputStream(baos);
+			oos.writeObject(command);
+			return baos.toByteArray();
+		} finally {
+			try {
+				if (null != oos) {
+					oos.close();
+				}
+			} catch (IOException ioe) {
+				log.error("getMessageBody: Error closing object output stream", ioe);
+			}
+		}
+
 	}
 
 	protected abstract String getVersion();

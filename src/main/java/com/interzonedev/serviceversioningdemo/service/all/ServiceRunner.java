@@ -1,10 +1,11 @@
 package com.interzonedev.serviceversioningdemo.service.all;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +71,8 @@ public class ServiceRunner {
 
 	}
 
-	public void receive() throws ShutdownSignalException, ConsumerCancelledException, InterruptedException {
+	public void receive() throws ShutdownSignalException, ConsumerCancelledException, InterruptedException,
+			ClassNotFoundException, IOException {
 
 		while (true) {
 			QueueingConsumer.Delivery delivery = consumer.nextDelivery();
@@ -99,8 +101,22 @@ public class ServiceRunner {
 
 	}
 
-	private Command getCommand(QueueingConsumer.Delivery delivery) {
-		return (Command) SerializationUtils.deserialize(delivery.getBody());
+	private Command getCommand(QueueingConsumer.Delivery delivery) throws IOException, ClassNotFoundException {
+
+		ObjectInputStream ois = null;
+		try {
+			ByteArrayInputStream bais = new ByteArrayInputStream(delivery.getBody());
+			ois = new ObjectInputStream(bais);
+			return (Command) ois.readObject();
+		} finally {
+			try {
+				if (ois != null) {
+					ois.close();
+				}
+			} catch (IOException ioe) {
+				log.error("getCommand: Error closing object input stream", ioe);
+			}
+		}
 	}
 
 	private String getVersion(QueueingConsumer.Delivery delivery) {
