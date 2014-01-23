@@ -60,11 +60,9 @@ public abstract class AbstractClient {
 		log.debug("send: Sending command " + command);
 
 		try {
-			Map<String, Object> headers = new HashMap<String, Object>();
-			headers.put(ExampleAMQP.VERSION_HEADER_NAME, getVersion());
-			BasicProperties basicProperties = new BasicProperties.Builder().headers(headers).build();
-			channel.basicPublish(ExampleAMQP.EXCHANGE_NAME, ExampleAMQP.ROUTING_KEY, basicProperties,
-					SerializationUtils.serialize(command));
+			BasicProperties messageProperties = getMessageProperties();
+			byte[] messageBody = getMessageBody(command);
+			channel.basicPublish(ExampleAMQP.EXCHANGE_NAME, ExampleAMQP.ROUTING_KEY, messageProperties, messageBody);
 		} catch (IOException ioe) {
 			log.error("send: Error sending message", ioe);
 		}
@@ -111,6 +109,17 @@ public abstract class AbstractClient {
 			log.error("deploy: Error running client", ioe);
 		}
 
+	}
+
+	private BasicProperties getMessageProperties() {
+		Map<String, Object> headers = new HashMap<String, Object>();
+		headers.put(ExampleAMQP.VERSION_HEADER_NAME, getVersion());
+		BasicProperties basicProperties = new BasicProperties.Builder().headers(headers).build();
+		return basicProperties;
+	}
+
+	private byte[] getMessageBody(Command command) {
+		return SerializationUtils.serialize(command);
 	}
 
 	protected abstract String getVersion();
