@@ -5,15 +5,11 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.rabbitmq.client.ConsumerCancelledException;
-import com.rabbitmq.client.ShutdownSignalException;
-
 public class ServiceRunner {
 
 	private static final Logger log = (Logger) LoggerFactory.getLogger(ServiceRunner.class);
 
-	public static void main(String[] args) throws ShutdownSignalException, ConsumerCancelledException, IOException,
-			InterruptedException {
+	public static void main(String[] args) {
 
 		final ServiceInvoker invoker = new ServiceInvoker();
 
@@ -21,15 +17,24 @@ public class ServiceRunner {
 			@Override
 			public void run() {
 				try {
+					log.debug("main: Shutting down");
 					invoker.destroy();
+					log.debug("main: Shut down");
 				} catch (IOException ioe) {
 					log.error("main: Error destroying invoker", ioe);
 				}
 			}
 		});
 
-		invoker.init();
-		invoker.receive();
+		try {
+			log.debug("main: Initializing invoker");
+			invoker.init();
+			log.debug("main: Starting invoker");
+			invoker.receive();
+			log.debug("main: Invoker completed");
+		} catch (Exception e) {
+			log.error("main: Error running invoker", e);
+		}
 
 	}
 
