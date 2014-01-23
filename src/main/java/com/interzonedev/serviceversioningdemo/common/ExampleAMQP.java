@@ -23,13 +23,18 @@ public interface ExampleAMQP {
 	public static final String ROUTING_KEY = "example_key";
 
 	/**
-	 * The key used to indicate version 1 of the service and client API.
+	 * The value used to indicate version 1 of the service and client API.
 	 */
-	public static final String VERSION_1_KEY = "v1";
+	public static final String VERSION_1 = "v1";
 
 	/**
-	 * The key used to indicate version 2 of the service and client API.
+	 * The value used to indicate version 2 of the service and client API.
 	 */
-	public static final String VERSION_2_KEY = "v2";
+	public static final String VERSION_2 = "v2";
+
+	/**
+	 * The name of the header that holds the version value on each request.
+	 */
+	public static final String VERSION_HEADER_NAME = "version";
 
 }

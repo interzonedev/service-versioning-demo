@@ -32,7 +32,7 @@ public class ExampleClient extends AbstractClient implements ExampleAPI {
 
 	@Override
 	protected String getVersion() {
-		return ExampleAMQP.VERSION_1_KEY;
+		return ExampleAMQP.VERSION_1;
 	}
 
 	@Override

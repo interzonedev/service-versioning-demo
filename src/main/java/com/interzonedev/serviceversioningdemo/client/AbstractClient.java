@@ -61,7 +61,7 @@ public abstract class AbstractClient {
 
 		try {
 			Map<String, Object> headers = new HashMap<String, Object>();
-			headers.put("version", getVersion());
+			headers.put(ExampleAMQP.VERSION_HEADER_NAME, getVersion());
 			BasicProperties basicProperties = new BasicProperties.Builder().headers(headers).build();
 			channel.basicPublish(ExampleAMQP.EXCHANGE_NAME, ExampleAMQP.ROUTING_KEY, basicProperties,
 					SerializationUtils.serialize(command));

@@ -8,6 +8,8 @@
 	</appender>
 
 	<logger name="com.interzonedev.serviceversioningdemo" level="DEBUG" />
+	<logger name="com.interzonedev.serviceversioningdemo.service" level="INFO" />
+	<logger name="com.interzonedev.serviceversioningdemo.client" level="INFO" />
 
 	<root level="DEBUG">
 		<appender-ref ref="STDOUT" />
