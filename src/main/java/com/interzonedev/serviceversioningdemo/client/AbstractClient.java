@@ -1,4 +1,4 @@
-package com.interzonedev.serviceversioningdemo;
+package com.interzonedev.serviceversioningdemo.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +9,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.interzonedev.serviceversioningdemo.common.Command;
+import com.interzonedev.serviceversioningdemo.common.ExampleAMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -33,7 +35,7 @@ public abstract class AbstractClient {
 		connection = factory.newConnection();
 
 		channel = connection.createChannel();
-		channel.exchangeDeclare(ExampleAPI.EXCHANGE_NAME, "direct");
+		channel.exchangeDeclare(ExampleAMQP.EXCHANGE_NAME, "direct");
 
 		log.info("Initialized client");
 
@@ -55,7 +57,7 @@ public abstract class AbstractClient {
 		log.debug("send: Sending command " + command);
 
 		try {
-			channel.basicPublish(ExampleAPI.EXCHANGE_NAME, getVersion(), null, SerializationUtils.serialize(command));
+			channel.basicPublish(ExampleAMQP.EXCHANGE_NAME, getVersion(), null, SerializationUtils.serialize(command));
 		} catch (IOException ioe) {
 			log.error("send: Error sending message", ioe);
 		}

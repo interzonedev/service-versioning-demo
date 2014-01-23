@@ -1,4 +1,4 @@
-package com.interzonedev.serviceversioningdemo;
+package com.interzonedev.serviceversioningdemo.service;
 
 import java.io.IOException;
 

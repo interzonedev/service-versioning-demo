@@ -1,4 +1,4 @@
-package com.interzonedev.serviceversioningdemo;
+package com.interzonedev.serviceversioningdemo.common;
 
 import java.io.Serializable;
 

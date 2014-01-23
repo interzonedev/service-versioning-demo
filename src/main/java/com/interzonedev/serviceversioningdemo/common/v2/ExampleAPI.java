@@ -1,6 +1,6 @@
-package com.interzonedev.serviceversioningdemo.v2;
+package com.interzonedev.serviceversioningdemo.common.v2;
 
-public interface ExampleAPI extends com.interzonedev.serviceversioningdemo.ExampleAPI {
+public interface ExampleAPI {
 
 	public static final String VERSION = "v2";
 

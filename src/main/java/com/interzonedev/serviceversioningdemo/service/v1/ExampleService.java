@@ -1,4 +1,6 @@
-package com.interzonedev.serviceversioningdemo.v1;
+package com.interzonedev.serviceversioningdemo.service.v1;
+
+import com.interzonedev.serviceversioningdemo.common.v1.ExampleAPI;
 
 public class ExampleService implements ExampleAPI {
 

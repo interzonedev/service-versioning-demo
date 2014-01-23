@@ -1,32 +1,33 @@
-package com.interzonedev.serviceversioningdemo.v2;
+package com.interzonedev.serviceversioningdemo.client.v1;
 
 import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.interzonedev.serviceversioningdemo.AbstractClient;
-import com.interzonedev.serviceversioningdemo.Command;
+import com.interzonedev.serviceversioningdemo.client.AbstractClient;
+import com.interzonedev.serviceversioningdemo.common.Command;
+import com.interzonedev.serviceversioningdemo.common.v1.ExampleAPI;
 
 public class ExampleClient extends AbstractClient implements ExampleAPI {
 
 	private static final Logger log = (Logger) LoggerFactory.getLogger(ExampleClient.class);
 
 	@Override
-	public void print(String message, boolean timestamp) {
+	public void print(String message) {
 
-		log.debug("print: message = " + message + " - timestamp = " + timestamp);
+		log.debug("print: message = " + message);
 
-		send(new Command("print", message, timestamp));
+		send(new Command("print", message));
 
 	}
 
 	@Override
-	public void println(String message, boolean timestamp) {
+	public void println(String message) {
 
-		log.debug("println: message = " + message + " - timestamp = " + timestamp);
+		log.debug("println: message = " + message);
 
-		send(new Command("println", message, timestamp));
+		send(new Command("println", message));
 
 	}
 
@@ -41,37 +42,28 @@ public class ExampleClient extends AbstractClient implements ExampleAPI {
 		String[] args = input.trim().split("\\s+");
 
 		if (args.length < 2) {
-			log.error("process: usage <method> [<timestamp>] <message part 1> [<message part 2>...]");
+			log.error("process: usage <method> <message part 1> [<message part 2>...]");
 			return;
 		}
 
 		String method = args[0];
-
-		int messageIndex = 1;
-		boolean timestamp = false;
-		String possibleTimestamp = args[1];
-		if ("true".equalsIgnoreCase(possibleTimestamp.trim()) || "false".equalsIgnoreCase(possibleTimestamp.trim())) {
-			timestamp = Boolean.parseBoolean(possibleTimestamp);
-			messageIndex = 2;
-		}
-
 		StringBuilder messageBuilder = new StringBuilder();
-		for (int i = messageIndex; i < args.length; i++) {
+		for (int i = 1; i < args.length; i++) {
 			messageBuilder.append(args[i]).append(" ");
 		}
 		String message = messageBuilder.toString().trim();
 
 		if ("println".equals(method)) {
-			println(message, timestamp);
+			println(message);
 		} else if ("print".equals(method)) {
-			print(message, timestamp);
+			print(message);
 		} else {
 			log.error("process: Unsuppored method " + method);
 		}
 
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 
 		final ExampleClient client = new ExampleClient();
 
@@ -101,4 +93,5 @@ public class ExampleClient extends AbstractClient implements ExampleAPI {
 		System.exit(0);
 
 	}
+
 }
