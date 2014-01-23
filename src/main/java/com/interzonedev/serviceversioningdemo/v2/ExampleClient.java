@@ -79,15 +79,24 @@ public class ExampleClient extends AbstractClient implements ExampleAPI {
 			@Override
 			public void run() {
 				try {
+					log.info("main: Shutting down");
 					client.destroy();
+					log.info("main: Shut down");
 				} catch (IOException ioe) {
 					log.error("main: Error destroying client", ioe);
 				}
 			}
 		});
 
-		client.init();
-		client.poll();
+		try {
+			log.info("main: Initializing client");
+			client.init();
+			log.info("main: Starting client");
+			client.poll();
+			log.info("main: Client completed");
+		} catch (IOException ioe) {
+			log.error("main: Error running client", ioe);
+		}
 
 		System.exit(0);
 

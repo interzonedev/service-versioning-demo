@@ -17,9 +17,9 @@ public class ServiceRunner {
 			@Override
 			public void run() {
 				try {
-					log.debug("main: Shutting down");
+					log.info("main: Shutting down");
 					invoker.destroy();
-					log.debug("main: Shut down");
+					log.info("main: Shut down");
 				} catch (IOException ioe) {
 					log.error("main: Error destroying invoker", ioe);
 				}
@@ -27,14 +27,16 @@ public class ServiceRunner {
 		});
 
 		try {
-			log.debug("main: Initializing invoker");
+			log.info("main: Initializing invoker");
 			invoker.init();
-			log.debug("main: Starting invoker");
+			log.info("main: Starting invoker");
 			invoker.receive();
-			log.debug("main: Invoker completed");
+			log.info("main: Invoker completed");
 		} catch (Exception e) {
 			log.error("main: Error running invoker", e);
 		}
+
+		System.exit(0);
 
 	}
 
