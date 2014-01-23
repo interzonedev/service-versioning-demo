@@ -6,9 +6,8 @@ import java.io.InputStreamReader;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.Logger;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;

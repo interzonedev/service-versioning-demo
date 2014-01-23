@@ -2,9 +2,8 @@ package com.interzonedev.serviceversioningdemo.v1;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.Logger;
 
 import com.interzonedev.serviceversioningdemo.AbstractClient;
 import com.interzonedev.serviceversioningdemo.Command;
