@@ -2,8 +2,19 @@ package com.interzonedev.serviceversioningdemo.service.v2;
 
 import com.interzonedev.serviceversioningdemo.common.v2.ExampleAPI;
 
+/**
+ * Version 2 service implementation of {@link ExampleAPI}.
+ * 
+ * @author mmarkarian
+ */
 public class ExampleService implements ExampleAPI {
 
+	/**
+	 * Prints a version 2 specific message to {@link System#out} with an optional timestamp..
+	 * 
+	 * @param message The message to print.
+	 * @param timestamp Whether or not to print a timestamp.
+	 */
 	@Override
 	public void print(String message, boolean timestamp) {
 
@@ -11,6 +22,12 @@ public class ExampleService implements ExampleAPI {
 
 	}
 
+	/**
+	 * Prints a version 2 specific message to {@link System#out} with an optional timestamp..
+	 * 
+	 * @param message The message to print.
+	 * @param timestamp Whether or not to print a timestamp.
+	 */
 	@Override
 	public void println(String message, boolean timestamp) {
 
@@ -18,6 +35,14 @@ public class ExampleService implements ExampleAPI {
 
 	}
 
+	/**
+	 * Builds the message to print.
+	 * 
+	 * @param message The message to print.
+	 * @param timestamp Whether or not to print a timestamp.
+	 * 
+	 * @return Returns the message to print.
+	 */
 	private String buildOutput(String message, boolean timestamp) {
 
 		StringBuilder out = new StringBuilder("Version 2:");

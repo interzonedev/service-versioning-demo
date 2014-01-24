@@ -18,10 +18,19 @@ import com.rabbitmq.client.ConsumerCancelledException;
 import com.rabbitmq.client.QueueingConsumer;
 import com.rabbitmq.client.ShutdownSignalException;
 
+/**
+ * Listens for version 1 and 2 AMQP service requests and dispatches the message to the appropriate
+ * {@link ServiceInvoker} implementation.
+ * 
+ * @author mmarkarian
+ */
 public class ServiceRunner {
 
 	private static final Logger log = (Logger) LoggerFactory.getLogger(ServiceRunner.class);
 
+	/**
+	 * Registry for version specific {@link ServiceInvoker} implementations.
+	 */
 	private final Map<String, ServiceInvoker> serviceInvokers = new HashMap<String, ServiceInvoker>();
 
 	private ConnectionFactory factory;
@@ -32,7 +41,14 @@ public class ServiceRunner {
 
 	private QueueingConsumer consumer;
 
-	public void init() throws IOException, ShutdownSignalException, ConsumerCancelledException, InterruptedException {
+	/**
+	 * Initializes this service runner without a whole lot of tuning or error handling. Registers version specific
+	 * {@link ServiceInvoker} implementations, creates the AMQP factory, connection and channel. Creates and binds the
+	 * necessary exchange, queue and consumer.
+	 * 
+	 * @throws IOException Thrown if there was an error setting up the AMQP message binding and consuming components.
+	 */
+	public void init() throws IOException {
 
 		log.info("init: Initializing service runner");
 
@@ -60,17 +76,33 @@ public class ServiceRunner {
 
 	}
 
-	public void destroy() throws IOException {
+	/**
+	 * Closes the AMQP channel and connection.
+	 * 
+	 * @throws IOException Thrown if there was an error closing the AMQP channel or connection.
+	 */
+	public void shutdown() throws IOException {
 
-		log.info("destroy: Destroying service runner");
+		log.info("shutdown: Shut down service runner");
 
 		channel.close();
 		connection.close();
 
-		log.info("destroy: Destroyed service runner");
+		log.info("shutdown: Shut down service runner");
 
 	}
 
+	/**
+	 * Runs indefinitely until the JVM is shut down, blocking until an AMQP request in received. Gets the
+	 * {@link Command} from the message body and the service version from the request headers and calls the appropriate
+	 * {@link ServiceInvoker} implmentation.
+	 * 
+	 * @throws ShutdownSignalException
+	 * @throws ConsumerCancelledException
+	 * @throws InterruptedException
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
 	public void receive() throws ShutdownSignalException, ConsumerCancelledException, InterruptedException,
 			ClassNotFoundException, IOException {
 
@@ -101,6 +133,18 @@ public class ServiceRunner {
 
 	}
 
+	/**
+	 * Deserializes the message body contained in the specified {@link QueueingConsumer.Delivery} into a {@link Command}
+	 * instance.
+	 * 
+	 * @param delivery The {@link QueueingConsumer.Delivery} received from the consumer for the request.
+	 * 
+	 * @return Returns a {@link Command} instance deserialized from the body of the specified
+	 *         {@link QueueingConsumer.Delivery}.
+	 * 
+	 * @throws IOException Thrown if there was an error deserializing the message body.
+	 * @throws ClassNotFoundException Thrown if there was an error deserializing the message body.
+	 */
 	private Command getCommand(QueueingConsumer.Delivery delivery) throws IOException, ClassNotFoundException {
 
 		ObjectInputStream ois = null;
@@ -119,12 +163,26 @@ public class ServiceRunner {
 		}
 	}
 
+	/**
+	 * Gets the service version value from the {@link ExampleAMQP#VERSION_HEADER_NAME} header in the properties in the
+	 * specified {@link QueueingConsumer.Delivery}.
+	 * 
+	 * @param delivery The {@link QueueingConsumer.Delivery} received from the consumer for the request.
+	 * 
+	 * @return Returns the service version value set in the headers of the specified {@link QueueingConsumer.Delivery}.
+	 */
 	private String getVersion(QueueingConsumer.Delivery delivery) {
 		Map<String, Object> headers = delivery.getProperties().getHeaders();
 		String version = headers.get(ExampleAMQP.VERSION_HEADER_NAME).toString();
 		return version;
 	}
 
+	/**
+	 * Launches an instance of this service runner and listents for AMQP requests. Blocks and services requests
+	 * indefinitely until the JVM is shut down. Adds a JVM shutdown hook to gracefully shutdown the service runner.
+	 * 
+	 * @param args The array of arguments passed in from the command line. Currently unused.
+	 */
 	public static void main(String[] args) {
 
 		final ServiceRunner serviceRunner = new ServiceRunner();
@@ -134,7 +192,7 @@ public class ServiceRunner {
 			public void run() {
 				try {
 					log.info("main: Shutting down service runner");
-					serviceRunner.destroy();
+					serviceRunner.shutdown();
 					log.info("main: Shut down service runner");
 				} catch (IOException ioe) {
 					log.error("main: Error destroying service runner", ioe);

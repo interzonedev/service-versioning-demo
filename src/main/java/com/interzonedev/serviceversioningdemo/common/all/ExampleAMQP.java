@@ -1,7 +1,7 @@
 package com.interzonedev.serviceversioningdemo.common.all;
 
 /**
- * Static definitions of properties for doing RPC over AMQP.
+ * Static definitions of properties for doing RPC over AMQP for all versions of the client and service.
  * 
  * @author mmarkarian
  */
