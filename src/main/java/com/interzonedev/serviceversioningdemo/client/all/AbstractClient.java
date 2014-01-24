@@ -18,9 +18,20 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
+/**
+ * Top level abstract superclass for all client implenmtations. Handles all the AMQP specific functionality of sending
+ * remote requests.
+ * 
+ * @author mmarkarian
+ */
 public abstract class AbstractClient {
 
 	private final Logger log = (Logger) LoggerFactory.getLogger(getClass());
+
+	/**
+	 * Command line input value that terminates the client.
+	 */
+	private static final String QUIT_INPUT = "quit";
 
 	private ConnectionFactory factory;
 
@@ -28,6 +39,12 @@ public abstract class AbstractClient {
 
 	private Channel channel;
 
+	/**
+	 * Initializes this client without a whole lot of tuning or error handling. Creates the AMQP factory, connection and
+	 * channel. Creates the necessary exchange to which messages are posted.
+	 * 
+	 * @throws IOException Thrown if there was an error setting up the AMQP message components.
+	 */
 	public void init() throws IOException {
 
 		log.info("init: Initializing client");
@@ -44,6 +61,11 @@ public abstract class AbstractClient {
 
 	}
 
+	/**
+	 * Closes the AMQP channel and connection.
+	 * 
+	 * @throws IOException Thrown if there was an error closing the AMQP channel or connection.
+	 */
 	public void shutdown() throws IOException {
 
 		log.info("shutdown: Shutting down client");
@@ -55,6 +77,13 @@ public abstract class AbstractClient {
 
 	}
 
+	/**
+	 * Sends a remote AMQP request with a message body that is a serialized representation of the specified
+	 * {@link Command}. Calls {@link #getVersion()} on the implementing client and sets the version in the request
+	 * headers.
+	 * 
+	 * @param command A {@link Command} instance that represents the use case of the request.
+	 */
 	protected void send(Command command) {
 
 		log.debug("send: Sending command " + command);
@@ -69,13 +98,19 @@ public abstract class AbstractClient {
 
 	}
 
+	/**
+	 * Runs indefinitely and polls {@link System#in} for input until {@link #QUIT_INPUT} is input. Calls the
+	 * {@link #process(String)} method on the implementing client so that the client can send the remote request.
+	 * 
+	 * @throws IOException Thrown if there was an error reading console input.
+	 */
 	protected void poll() throws IOException {
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
 		String input = br.readLine();
 
-		while (!"quit".equals(input)) {
+		while (!QUIT_INPUT.equals(input)) {
 			if (!"".equals(input.trim())) {
 				process(input);
 			}
@@ -84,6 +119,11 @@ public abstract class AbstractClient {
 
 	}
 
+	/**
+	 * Launches an instance of the implementing client and polls for command line input. Blocks and services requests
+	 * indefinitely until the JVM is shut down or a {@link #QUIT_INPUT} is encountered. Adds a JVM shutdown hook to
+	 * gracefully shutdown the client.
+	 */
 	protected void deploy() {
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -104,13 +144,20 @@ public abstract class AbstractClient {
 			init();
 			log.info("deploy: Starting client");
 			poll();
-			log.info("deploy: Client completed");
+			log.info("deploy: Client stopping");
 		} catch (IOException ioe) {
 			log.error("deploy: Error running client", ioe);
 		}
 
 	}
 
+	/**
+	 * Gets a {@link BasicProperties} instance with the {@link ExampleAMQP#VERSION_HEADER_NAME} header set to the value
+	 * returned by calling {@link #getVersion()} on the implementing client.
+	 * 
+	 * @return Returns a {@link BasicProperties} instance with the {@link ExampleAMQP#VERSION_HEADER_NAME} header set to
+	 *         the value returned by calling {@link #getVersion()} on the implementing client.
+	 */
 	private BasicProperties getMessageProperties() {
 		Map<String, Object> headers = new HashMap<String, Object>();
 		headers.put(ExampleAMQP.VERSION_HEADER_NAME, getVersion());
@@ -118,6 +165,15 @@ public abstract class AbstractClient {
 		return basicProperties;
 	}
 
+	/**
+	 * Serializes the specified {@link Command} instance into an array of bytes to be set as the message body.
+	 * 
+	 * @param command A {@link Command} instance that represents the use case of the request.
+	 * 
+	 * @return Returns an array of bytes serialized from the specified {@link Command} instance.
+	 * 
+	 * @throws IOException Thrown if there was an error serializing the {@link Command} instance.
+	 */
 	private byte[] getMessageBody(Command command) throws IOException {
 
 		ObjectOutputStream oos = null;
@@ -138,8 +194,18 @@ public abstract class AbstractClient {
 
 	}
 
+	/**
+	 * Allows the implementing client to return a value specifying the client version.
+	 * 
+	 * @return Returns a value specifying the client version.
+	 */
 	protected abstract String getVersion();
 
+	/**
+	 * Client specific method to transform command line input into an AMQP request.
+	 * 
+	 * @param input Command line input that determines the use case of the remote request to send.
+	 */
 	protected abstract void process(String input);
 
 }

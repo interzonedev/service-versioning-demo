@@ -22,7 +22,7 @@ public class ExampleService implements ExampleAPI {
 	}
 
 	/**
-	 * Prints a version 1 specific message to {@link System#out} with a newline..
+	 * Prints a version 1 specific message to {@link System#out} with a newline.
 	 * 
 	 * @param message The message to print.
 	 */

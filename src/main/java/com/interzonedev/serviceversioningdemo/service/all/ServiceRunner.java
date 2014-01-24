@@ -205,7 +205,7 @@ public class ServiceRunner {
 			serviceRunner.init();
 			log.info("main: Starting service runner");
 			serviceRunner.receive();
-			log.info("main: Service runner completed");
+			log.info("main: Service runner stopped");
 		} catch (Exception e) {
 			log.error("main: Error running service runner", e);
 		}

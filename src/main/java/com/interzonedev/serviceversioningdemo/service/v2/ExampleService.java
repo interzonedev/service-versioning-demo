@@ -10,7 +10,7 @@ import com.interzonedev.serviceversioningdemo.common.v2.ExampleAPI;
 public class ExampleService implements ExampleAPI {
 
 	/**
-	 * Prints a version 2 specific message to {@link System#out} with an optional timestamp..
+	 * Prints a version 2 specific message to {@link System#out} with an optional timestamp.
 	 * 
 	 * @param message The message to print.
 	 * @param timestamp Whether or not to print a timestamp.
@@ -23,7 +23,7 @@ public class ExampleService implements ExampleAPI {
 	}
 
 	/**
-	 * Prints a version 2 specific message to {@link System#out} with an optional timestamp..
+	 * Prints a version 2 specific message to {@link System#out} with an optional timestamp and a newline.
 	 * 
 	 * @param message The message to print.
 	 * @param timestamp Whether or not to print a timestamp.
