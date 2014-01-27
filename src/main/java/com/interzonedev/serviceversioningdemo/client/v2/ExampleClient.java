@@ -1,18 +1,30 @@
-package com.interzonedev.serviceversioningdemo.v2;
+package com.interzonedev.serviceversioningdemo.client.v2;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Logger;
+import com.interzonedev.serviceversioningdemo.client.all.AbstractClient;
+import com.interzonedev.serviceversioningdemo.common.all.Command;
+import com.interzonedev.serviceversioningdemo.common.all.ExampleAMQP;
+import com.interzonedev.serviceversioningdemo.common.v2.ExampleAPI;
 
-import com.interzonedev.serviceversioningdemo.AbstractClient;
-import com.interzonedev.serviceversioningdemo.Command;
-
+/**
+ * Version 2 client implementation of {@link ExampleAPI}.
+ * 
+ * @author mmarkarian
+ */
 public class ExampleClient extends AbstractClient implements ExampleAPI {
 
 	private static final Logger log = (Logger) LoggerFactory.getLogger(ExampleClient.class);
 
+	/**
+	 * Sends a message to the service to print a version 2 specific message to {@link System#out} with an optional
+	 * timestamp.
+	 * 
+	 * @param message The message to print.
+	 */
 	@Override
 	public void print(String message, boolean timestamp) {
 
@@ -22,6 +34,12 @@ public class ExampleClient extends AbstractClient implements ExampleAPI {
 
 	}
 
+	/**
+	 * Sends a message to the service to print a version 2 specific message to {@link System#out} with an optional
+	 * timestamp and a newline.
+	 * 
+	 * @param message The message to print.
+	 */
 	@Override
 	public void println(String message, boolean timestamp) {
 
@@ -31,13 +49,26 @@ public class ExampleClient extends AbstractClient implements ExampleAPI {
 
 	}
 
+	/**
+	 * Gets the version 2 constant to communicate to the rest of the system that this is the version 2 client.
+	 * 
+	 * @return Returns {@link ExampleAMQP#VERSION_2}.
+	 */
 	@Override
 	protected String getVersion() {
-		return VERSION;
+		return ExampleAMQP.VERSION_2;
 	}
 
+	/**
+	 * Determines the use case represented by the specified input and calls the appropriate method on this instance with
+	 * the arguments parsed from the specified input.
+	 * 
+	 * @param input Command line input that determines the use case of the remote request to send.
+	 */
 	@Override
 	protected void process(String input) {
+
+		log.debug("process: input = " + input);
 
 		String[] args = input.trim().split("\\s+");
 
@@ -70,25 +101,23 @@ public class ExampleClient extends AbstractClient implements ExampleAPI {
 			log.error("process: Unsuppored method " + method);
 		}
 
+		log.debug("process: End");
+
 	}
 
+	/**
+	 * Launches an instance of this client and polls for command line input. Blocks and gathers input and sends requests
+	 * indefinitely until the JVM is shut down.
+	 * 
+	 * @param args The array of arguments passed in from the command line. Currently unused.
+	 */
 	public static void main(String[] args) throws IOException {
 
 		final ExampleClient client = new ExampleClient();
 
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				try {
-					client.destroy();
-				} catch (IOException ioe) {
-					log.error("main: Error destroying client", ioe);
-				}
-			}
-		});
-
-		client.init();
-		client.poll();
+		log.info("main: Deploying client");
+		client.deploy();
+		log.info("main: Client stopped");
 
 		System.exit(0);
 
