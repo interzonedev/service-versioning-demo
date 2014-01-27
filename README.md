@@ -25,19 +25,19 @@ The difference between version 1 and 2 is that version 2 accepts a boolean indic
 The version 1 API as implemented on both the client and service side is:
 
 ```java
-    public interface ExampleAPI {
-        public void print(String message);
-        public void println(String message);
-    }
+public interface ExampleAPI {
+    public void print(String message);
+    public void println(String message);
+}
 ```
 
 The version 2 API as implemented on both the client and service side is:
 
 ```java
-    public interface ExampleAPI {
-        public void print(String message, boolean timestamp);
-        public void println(String message, boolean timestamp);
-    }
+public interface ExampleAPI {
+    public void print(String message, boolean timestamp);
+    public void println(String message, boolean timestamp);
+}
 ```
 
 The medium of exchange between the client and service is the `Command` value object that encapsulates the method to call on the service and any arguments that should be passed into that method.
@@ -66,7 +66,7 @@ The format of the command line input for the version 2 client is:
 `<method> [<timestamp>] <message part 1> [<message part 2>...]`
 where the method is either `print` or `println`, timestamp is either `true` or `false` and the message parts are arbitrary stings
 
-Entering `quit` exits the client for both versions.
+Entering "quit" exits the client for both versions.
 
 ### Version Determination
 
@@ -87,10 +87,10 @@ channel.exchangeDeclare(ExampleAMQP.EXCHANGE_NAME, "direct");
 Then sends messages with a version specific header:
 
 ```java
-    Map<String, Object> headers = new HashMap<String, Object>();
-    headers.put(ExampleAMQP.VERSION_HEADER_NAME, getVersion());
-    BasicProperties messageProperties = new BasicProperties.Builder().headers(headers).build();
-    channel.basicPublish(ExampleAMQP.EXCHANGE_NAME, ExampleAMQP.ROUTING_KEY, messageProperties, messageBody);
+Map<String, Object> headers = new HashMap<String, Object>();
+headers.put(ExampleAMQP.VERSION_HEADER_NAME, getVersion());
+BasicProperties messageProperties = new BasicProperties.Builder().headers(headers).build();
+channel.basicPublish(ExampleAMQP.EXCHANGE_NAME, ExampleAMQP.ROUTING_KEY, messageProperties, messageBody);
 ```
 
 The service declares a direct exchange and binds to it:
