@@ -55,7 +55,7 @@ public abstract class AbstractClient {
 		connection = factory.newConnection();
 
 		channel = connection.createChannel();
-		channel.exchangeDeclare(ExampleAMQP.EXCHANGE_NAME, "direct");
+		channel.exchangeDeclare(ExampleAMQP.EXCHANGE_NAME, "direct", false);
 
 		log.info("init: Initialized client");
 

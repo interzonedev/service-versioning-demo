@@ -65,7 +65,7 @@ public class ServiceRunner {
 
 		channel = connection.createChannel();
 
-		channel.exchangeDeclare(ExampleAMQP.EXCHANGE_NAME, "direct");
+		channel.exchangeDeclare(ExampleAMQP.EXCHANGE_NAME, "direct", false);
 		channel.queueDeclare(ExampleAMQP.QUEUE_NAME, false, false, true, null);
 		channel.queueBind(ExampleAMQP.QUEUE_NAME, ExampleAMQP.EXCHANGE_NAME, ExampleAMQP.ROUTING_KEY);
 
